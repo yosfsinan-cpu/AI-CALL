@@ -20,7 +20,7 @@ jobs:
           cp Info.plist Payload/YuseefAI.app/
         fi
         
-        # دروستکرنا فایلەکێ مەزنتر (Dummy File) دا قەبارێ ئەپێ بگەهیتە دەوروبەرا 6 مێگابایتی
+        # ل ڤێرە قەبارێ ئەپێ دبە دەوروبەرا 6 مێگابایتی
         dd if=/dev/zero of=Payload/YuseefAI.app/assets_pack.bin bs=1m count=6
 
     - name: Package into .ipa format
