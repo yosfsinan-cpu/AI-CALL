@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuseef Sinan - AI Assistant & Studio</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
+        body { background: #0f172a; color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Header */
+        header { background: #1e293b; padding: 15px; text-align: center; border-bottom: 2px solid #334155; }
+        header h1 { font-size: 20px; color: #38bdf8; }
+        
+        /* Main Container */
+        .main-container { flex: 1; display: none; padding: 15px; overflow-y: auto; padding-bottom: 70px; }
+        .active-tab { display: block; }
+        
+        /* Robot AI Call Screen */
+        .robot-box { text-align: center; margin-top: 20px; }
+        .robot-avatar { width: 120px; height: 120px; background: #38bdf8; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 50px; box-shadow: 0 0 20px rgba(56, 189, 248, 0.5); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        .chat-box { background: #1e293b; border-radius: 10px; padding: 15px; height: 250px; overflow-y: auto; text-align: right; margin-bottom: 15px; border: 1px solid #334155; }
+        .msg { margin: 10px 0; padding: 10px; border-radius: 8px; max-width: 80%; }
+        .bot-msg { background: #334155; float: right; clear: both; }
+        .user-msg { background: #0284c7; float: left; clear: both; }
+
+        /* Code Studio Screen */
+        textarea { width: 100%; height: 150px; background: #1e293b; color: #38bdf8; border: 1px solid #475569; border-radius: 8px; padding: 10px; font-family: monospace; resize: none; margin-bottom: 10px; }
+        .preview-box { background: #fff; color: #000; width: 100%; height: 180px; border-radius: 8px; border: none; }
+        .btn { background: #22c55e; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
+
+        /* Bottom Tabs Bar */
+        .bottom-tabs { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: #1e293b; display: flex; border-top: 2px solid #334155; z-index: 1000; }
+        .tab-btn { flex: 1; background: none; border: none; color: #94a3b8; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; }
+        .tab-btn.active { color: #38bdf8; background: #0f172a; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ڕۆبۆتێ یوسف سینان (AI & Code Engine)</h1>
+    </header>
+
+    <!-- Tab 1: AI Call & Robot Chat -->
+    <div id="tab-call" class="main-container active-tab">
+        <div class="robot-box">
+            <div class="robot-avatar">🤖</div>
+            <p style="color: #94a3b8; margin-bottom: 10px;">ڕۆبۆت ئامادەیە (بێ وایفای کار دکەت)</p>
+        </div>
+        <div class="chat-box" id="chatBox">
+            <div class="msg bot-msg">سلاو یوسف! ئەز ڕۆبۆتێ تە مە. چ کارەک یان چ کۆدەک دڤێت ئەز بۆ تە بنڤیسیم و بکەمە وێبسایت؟</div>
+        </div>
+        <div style="display: flex; gap: 5px;">
+            <input type="text" id="userInput" placeholder="بئاخڤە دگەل من (بادینی یان سۆرانی)..." style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #475569; background: #1e293b; color: #fff;">
+            <button onclick="sendMessage()" style="padding: 10px 15px; background: #38bdf8; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">ناردن</button>
+        </div>
+    </div>
+
+    <!-- Tab 2: Code Studio & Preview -->
+    <div id="tab-code" class="main-container">
+        <h3 style="margin-bottom: 5px; color: #38bdf8;">جهێ نڤیسینا کۆدان (HTML/JS)</h3>
+        <textarea id="codeEditor">&lt;h2 style="color:red;"&gt;سلاو جیهان! ئەڤە مالپەرا منە&lt;/h2&gt;
+&lt;p&gt;ئەڤە ب دەستێ ڕۆبۆتی هاتە چێکرن!&lt;/p&gt;</textarea>
+        <button class="btn" onclick="runCode()">جێبەجێکرن و پیشاندان (Run)</button>
+        
+        <h3 style="margin: 10px 0 5px; color: #38bdf8;">دیمەنێ مۆبایلی (Live Preview):</h3>
+        <iframe id="previewFrame" class="preview-box"></iframe>
+    </div>
+
+    <!-- Bottom Navigation Tabs (2 Tabs) -->
+    <div class="bottom-tabs">
+        <button class="tab-btn active" onclick="switchTab('call', this)">
+            <span>📞 AI CALL</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('code', this)">
+            <span>💻 Code & Web</span>
+        </button>
+    </div>
+
+    <script>
+        // Tab Switcher
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.main-container').forEach(el => el.classList.remove('active-tab'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            if(tabName === 'call') {
+                document.getElementById('tab-call').classList.add('active-tab');
+            } else {
+                document.getElementById('tab-code').classList.add('active-tab');
+            }
+            btn.classList.add('active');
+        }
+
+        // Robot Chat Logic (Kurdish Badini/Sorani)
+        function sendMessage() {
+            let input = document.getElementById('userInput');
+            let chatBox = document.getElementById('chatBox');
+            if(!input.value.trim()) return;
+
+            // User Message
+            chatBox.innerHTML += `<div class="msg user-msg">${input.value}</div>`;
+            let userText = input.value;
+            input.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Robot Auto-Reply Simulation
+            setTimeout(() => {
+                let reply = "بێگومان یوسف گیان! من ڤی کاری بۆ تە دکەم. تە دڤێت تەکنەلۆجیا، یان کۆدەکێ پایتۆن یان هندی کومیڈیا تێکەلی هەبن؟";
+                if(userText.includes("سلاو") || userText.includes("بژین")) {
+                    reply = "سلاو ڕێز! ئەز ڕۆبۆتێ YUSEEF SINAN مە، ئامادەم ملیون شۆلان بۆ تە بکەم!";
+                } else if(userText.includes("كۆد") || userText.includes("code")) {
+                    reply = "تەڤگەرا کۆدکرنێ ڤەکرییە، سەرەدانا بەشا (Code & Web) بکە دا کۆدان بنڤیسین!";
+                }
+                chatBox.innerHTML += `<div class="msg bot-msg">${reply}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 800);
+        }
+
+        // Run Code to Mobile Preview Frame
+        function runCode() {
+            let code = document.getElementById('codeEditor').value;
+            let frame = document.getElementById('previewFrame');
+            let doc = frame.contentDocument || frame.contentWindow.document;
+            doc.open();
+            doc.write(code);
+            doc.close();
+        }
+
+        // Run initial code preview
+        runCode();
+    </script>
+</body>
+</html>
