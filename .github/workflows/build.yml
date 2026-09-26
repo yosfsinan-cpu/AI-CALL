@@ -11,7 +11,7 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Prepare App Payload Structure
+    - name: Prepare App Payload Structure & Assets
       run: |
         mkdir -p Payload/YuseefAI.app
         cp index.html Payload/YuseefAI.app/
@@ -19,6 +19,9 @@ jobs:
         if [ -f "Info.plist" ]; then
           cp Info.plist Payload/YuseefAI.app/
         fi
+        
+        # دروستکرنا فایلەکێ مەزنتر (Dummy File) دا قەبارێ ئەپێ بگەهیتە دەوروبەرا 6 مێگابایتی
+        dd if=/dev/zero of=Payload/YuseefAI.app/assets_pack.bin bs=1m count=6
 
     - name: Package into .ipa format
       run: |
