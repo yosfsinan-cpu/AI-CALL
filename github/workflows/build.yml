@@ -1,0 +1,29 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup App Structure
+      run: |
+        mkdir -p Payload/YuseefAI.app
+        # لێرە HTML و فایلێن خۆ دگوهێزینە ناڤ Payload/YuseefAI.app
+        cp index.html Payload/YuseefAI.app/
+        
+    - name: Create IPA Package
+      run: |
+        cd Payload
+        zip -r ../yuseef_ai.ipa YuseefAI.app
+        
+    - name: Upload IPA Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: YuseefAI-IPA
+        path: yuseef_ai.ipa
