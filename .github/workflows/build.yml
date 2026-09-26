@@ -20,14 +20,13 @@ jobs:
           cp Info.plist Payload/YuseefAI.app/
         fi
         
-        # ل ڤێرە قەبارێ ئەپێ دبە دەوروبەرا 6 مێگابایتی
+        # دروستکرنا فایلەکێ پووچ دا قەبارێ ئەپێ بگەهیتە دەوروبەرا 6 مێگابایتی
         dd if=/dev/zero of=Payload/YuseefAI.app/assets_pack.bin bs=1m count=6
 
     - name: Package into .ipa format
       run: |
-        cd Payload
-        zip -r ../yuseef_ai.ipa YuseefAI.app
-        cd ..
+        # لێرەدا مە راستڤەکرن کریە دا folderـا Payload ب دروستی بچتە ناڤ IPA بۆ ESign
+        zip -r yuseef_ai.ipa Payload
 
     - name: Upload Generated IPA Artifact
       uses: actions/upload-artifact@v4
