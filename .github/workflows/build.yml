@@ -9,15 +9,13 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Prepare App Payload Structure
       run: |
         mkdir -p Payload/YuseefAI.app
-        # ڤەگوهاستنا index.html بۆ ناڤ پەیلوودا ئەپی
         cp index.html Payload/YuseefAI.app/
         
-        # ڤەگوهاستنا Info.plist یا تە بۆ ناڤ پەیلوودێ دا ڤێرژن و مێتاپەیدا کار بکەن
         if [ -f "Info.plist" ]; then
           cp Info.plist Payload/YuseefAI.app/
         fi
@@ -29,7 +27,7 @@ jobs:
         cd ..
 
     - name: Upload Generated IPA Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: YuseefAI-IPA
         path: yuseef_ai.ipa
